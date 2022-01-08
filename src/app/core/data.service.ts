@@ -9,6 +9,7 @@ import { Book } from "app/models/book";
 import { OldBook } from "app/models/old-book";
 import { BookTrackerError } from 'app/models/bookTrackerError';
 import { CONTENT_TYPE } from './add-header.interceptor';
+import { CACHEABLE } from './cache.interceptor';
 
 @Injectable({
   providedIn: 'root'
@@ -33,8 +34,8 @@ export class DataService {
 
   getAllBooks(): Observable<Book[] | BookTrackerError> {
     return this.http.get<Book[]>('/api/books', {
-      // won't actually change the payload to xml, but shows how to override:
-      context: new HttpContext().set(CONTENT_TYPE, 'application/xml')
+      // will skip caching step:
+      context: new HttpContext().set(CACHEABLE, false)
     })
     .pipe(
       catchError(err => this.handleHttpError(err))
